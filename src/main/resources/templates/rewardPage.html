@@ -16,7 +16,6 @@
         <div th:replace="~{index::showUserInfo}"></div>
 
         <div class="col-md-7" >
-            <!--            普通帖子区-->
             <div class="row clearfix">
                 <div class="col-md-12">
 
@@ -47,5 +46,10 @@
 <link href="/css/style.css" rel="stylesheet">
 <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-</body>
+<script>
+    var message="[[${message}]]";
+    if (message!=""){
+        alert(message);
+    }
+</script></body>
 </html>

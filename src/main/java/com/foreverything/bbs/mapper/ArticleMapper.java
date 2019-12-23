@@ -52,18 +52,31 @@ public interface ArticleMapper {
     @Update("update article set a_title=#{article.title},a_content=#{article.content} where a_id=#{article.id}")
     public int updateArticle(@Param("article")Article article);
 
-    @Update("update article set a_is_delete=true where id=#{id}")
+    @Update("update article set a_is_delete=true where a_id=#{id}")
     public int deleteArticleByID(@Param("id")Long id);
 
-    @Update("update article set a_is_top=false where id=#{id}")
+    @Update("update article set a_is_top=false where a_id=#{id}")
     public int cancelUpArticleByID(@Param("id")Long id);
 
-    @Update("update article set a_is_top=true where id=#{id}")
+    @Update("update article set a_is_top=true where a_id=#{id}")
     public int upArticle(@Param("id")Long id);
 
-    @Update("update article set a_is_marrow=true where id=#{id}")
+    @Update("update article set a_is_marrow=true where a_id=#{id}")
     public int marrowArticleByID(@Param("id")Long id);
 
-    @Update("update article set a_is_marrow=false where id=#{id}")
+    @Update("update article set a_is_marrow=false where a_id=#{id}")
     public int cancelMarrowArticleByID(@Param("id")Long id);
+
+    @Select("select * from article where a_is_delete=false and (a_title like #{str} or a_content like #{str}) ")
+    @Results({
+            @Result(property = "id",column = "a_id",id = true),
+            @Result(property = "userID",column = "a_author_id"),
+            @Result(property = "createTime",column = "a_create_time"),
+            @Result(property = "content",column = "a_content"),
+            @Result(property = "isMarrow",column = "a_is_marrow"),
+            @Result(property = "title",column = "a_title"),
+            @Result(property = "isTop",column = "a_is_top")
+    })
+    public List<Article> searchArticle(@Param("str") String str);
+
 }

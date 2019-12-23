@@ -4,7 +4,6 @@ package com.foreverything.bbs.controller;
 import com.foreverything.bbs.entities.User;
 import com.foreverything.bbs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.swing.*;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
 
 /**
@@ -34,36 +28,52 @@ public class UserController {
     ModelAndView modelAndView;
 
     @PostMapping("/login")
-    public ModelAndView userLogin(@RequestParam("mail") String mail, @RequestParam("password") String password, HttpServletRequest request){
+    public ModelAndView userLogin(@RequestParam("id")String id, @RequestParam("password") String password, HttpServletRequest request){
         ModelAndView mv=new ModelAndView();
-
-        int userID=userService.getIDByMail(mail);
+        Integer userID=0;
+        try{
+            userID=Integer.valueOf(id);
+        }catch (Exception e){
+            mv.addObject("message","请输入您注册时填写的六位ID");
+            mv.setViewName("loginPage");
+            return mv;
+        }
         String pw=userService.getPas(userID);
         if (null==pw){
-            mv.addObject("msg","该用户不存在");
-            mv.setViewName("login");
+            mv.addObject("message","该用户不存在");
+            mv.setViewName("loginPage");
         }else if (pw.equals(password)){
-            mv.addObject("isAdmin",userService.judgeUserByID(userID));
+            User user=userService.getUserByID(userID);
+            request.getSession().setAttribute("isAdmin",user.isAdmin());
+            request.getSession().setAttribute("userName",user.getName());
             request.getSession().setAttribute("userID",userID);
+            request.getSession().setAttribute("userEmail",user.getMail());
+            request.getSession().setAttribute("userPoints",user.getGrade());
             mv.setViewName("index");
         }else{
-            mv.addObject("msg","密码错误");
-            mv.setViewName("login");
+            mv.addObject("message","密码错误");
+            mv.setViewName("loginPage");
         }
 
         return mv;
     }
 
     @PostMapping("/register")
-    public ModelAndView createUser(@RequestParam("name") String name, @RequestParam("password") String password, @RequestParam("mail") String mail, HttpServletResponse response){
-        int id=userService.insertUser(name,password,mail);
+    public ModelAndView createUser(@RequestParam("name") String name, @RequestParam("repassword")String repassword,@RequestParam("password") String password, @RequestParam("mail") String mail, HttpServletResponse response){
         ModelAndView mv=new ModelAndView();
-        if (id>0){
-            mv.addObject("msg","注册成功，您的id为："+id);
-            mv.setViewName("login");
-        }else{
-            mv.addObject("msg","注册失败，您的邮箱已注册");
+        if (null==password||null==repassword||!password.equals(repassword)){
+            mv.addObject("message","两次密码不一致");
             mv.setViewName("register");
+        }else{
+            int id=userService.insertUser(name,password,mail);
+
+            if (id>0){
+                mv.addObject("message","注册成功，您的id为："+id+",请牢记");
+                mv.setViewName("loginPage");
+            }else{
+                mv.addObject("message","注册失败");
+                mv.setViewName("register");
+            }
         }
         return mv;
     }
@@ -86,7 +96,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String Login(){
-        return "login";
+        return "loginPage";
     }
 
     @GetMapping("/register")

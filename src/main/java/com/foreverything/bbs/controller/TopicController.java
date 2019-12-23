@@ -32,13 +32,14 @@ public class TopicController {
         return mv;
     }
 
-    @PostMapping("/topic")
-    public String createNewTopic(Topic topic){
+    @PostMapping("/add/topic")
+    public String createNewTopic(Topic topic,HttpServletRequest request){
 
         if (null==topic.getTitle()||null==topic.getContent()){
 //            失败跳转，不同区域把topic改成自己区域的名称就行
             return "redirect:/new/topic";
         }else{
+            topic.setUserID((Integer)request.getSession().getAttribute("userID"));
             Long id=topicService.insertTopic(topic);
             if (id>0){
 //                成功跳转，同样只改topic
@@ -50,18 +51,18 @@ public class TopicController {
         }
     }
 
-    @PutMapping("/topic")
+    @PutMapping("/add/topic")
     public ModelAndView updateTopic(Topic topic){
         ModelAndView mv=new ModelAndView();
         if (null==topic.getContent()||null==topic.getTitle()){
-            mv.addObject("msg","标题或内容为空！");
+            mv.addObject("message","标题或内容为空！");
 //            TODO 跳转到原修改帖子界面
         }else{
             if (topicService.updateTopic(topic)>0){
-                mv.addObject("msg","修改成功");
+                mv.addObject("message","修改成功");
 //                TODO 跳转到讨论区页面
             }else{
-                mv.addObject("msg","修改失败！");
+                mv.addObject("message","修改失败！");
 //                TODO 跳转到原修改帖子页面
             }
         }

@@ -1,6 +1,7 @@
 package com.foreverything.bbs.controller;
 
 import com.foreverything.bbs.entities.Article;
+import com.foreverything.bbs.entities.Topic;
 import com.foreverything.bbs.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,11 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
     /**
-     * @ClassName PartOne
-     * @Author ying_tie
-     * Date 14:52 2019/12/16
-     * @Description
-     */
+ * @ClassName PartOne
+ * @Author ying_tie
+ * Date 14:52 2019/12/16
+ * @Description
+ */
     @Controller
     public class ArticleController {
 
@@ -34,45 +35,42 @@ import java.util.List;
             return mv;
         }
 
-        @PostMapping("/article")
-        public String createNewArticle(Article article, HttpServletRequest request,Model model){
-            System.out.println(article);
-            if (article.getTitle().trim().length()==0||article.getContent().trim().length()==0){
-                System.out.println("不完整");
-                model.addAttribute("msg","不完整");
-                return "redirect:/new/article";
+        @PostMapping("/add/article")
+        public String createNewArticle(Article article,Model model,HttpServletRequest request){
+            if (article.getTitle().length()==0||0==article.getContent().length()){
+                model.addAttribute("message","内容不完整");
+                return "newArticlePage";
             }else{
+                article.setUserID((Integer) request.getSession().getAttribute("userID"));
                 Long id=articleService.insertArticle(article);
                 if (id>0){
-                    System.out.println("成功");
                     return "redirect:/article";
                 }else{
-                    model.addAttribute("msg","错误");
-                    System.out.println("错误");
-                    return "redirect:/new/article";
+                    model.addAttribute("message","发布失败，请重试");
+                    return "newArticlePage";
                 }
             }
 
         }
 
-        @DeleteMapping("/article")
+        @DeleteMapping("/delete/article")
         public int deleteArticle(Long  id){
             return articleService.deleteArticle(id);
         }
 
 
-        @PutMapping("/article")
+        @PutMapping("/update/article")
         public ModelAndView updateArticle(Article article){
             ModelAndView mv=new ModelAndView();
             if (null==article.getContent()||null==article.getTitle()){
-                mv.addObject("msg","标题或内容为空！");
+                mv.addObject("message","标题或内容为空！");
 //            TODO 跳转到原修改帖子界面
             }else{
                 if (articleService.updateArticle(article)>0){
-                    mv.addObject("msg","修改成功");
+                    mv.addObject("message","修改成功");
 //                TODO 跳转到讨论区页面
                 }else{
-                    mv.addObject("msg","修改失败！");
+                    mv.addObject("message","修改失败！");
 //                TODO 跳转到原修改帖子页面
                 }
             }

@@ -27,7 +27,7 @@ public class ReplayController {
     @Autowired
     TopicService topicService;
 
-    @PostMapping("/replay/add")
+    @PostMapping("/add/replay")
     public String replaySomething( HttpServletRequest request){
         ModelAndView mv=new ModelAndView();
         Replay replay=new Replay();
@@ -42,9 +42,9 @@ public class ReplayController {
             Topic topic=topicService.getTopicByID(fromID);
             mv.addObject("obj",topic);
             System.out.println("插入的topic为"+topic);
-            mv.addObject("msg","发表成功");
+            mv.addObject("message","发表成功");
         }else{
-            mv.addObject("msg","发表失败");
+            mv.addObject("message","发表失败");
         }
         String path=request.getParameter("path_s");
         System.out.println("跳转的path为"+path);

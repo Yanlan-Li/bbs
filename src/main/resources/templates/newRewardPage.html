@@ -10,7 +10,7 @@
 
 
 <div class="container-fluid" style="margin: 20px;">
-    <form method="post" action="/reward">
+    <form method="post" action="/add/reward">
         <div class="row clearfix">
             <div class="col-md-offset-2 col-md-8 column" >
                 <div class="row">
@@ -31,7 +31,7 @@
                 <hr class="style-three"/>
                 <div class="row ">
                     <div class="col-md-12 column">
-                        <textarea class="form-control" rows="6"></textarea>
+                        <textarea class="form-control" rows="6" name="content"></textarea>
                     </div>
                 </div>
                 <hr class="hr25">
@@ -40,7 +40,7 @@
                         <input class="form-control btn btn-primary"  type="submit" value="发布">
                     </div>
                     <div class="col-md-offset-8 col-md-2 column">
-                        <input class="form-control btn btn-info" type="button" href="/index" value="返回首页">
+                        <input class="form-control btn btn-info" type="button" href="/" value="返回首页">
                     </div>
                 </div>
             </div>
@@ -54,6 +54,10 @@
 <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <link href="/css/style.css" rel="stylesheet">
-
-</body>
+<script>
+    var message="[[${message}]]";
+    if (message!=""){
+        alert(message);
+    }
+</script></body>
 </html>

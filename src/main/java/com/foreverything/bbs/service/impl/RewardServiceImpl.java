@@ -85,13 +85,18 @@ public class RewardServiceImpl implements RewardService {
     }
 
     @Override
-    public int deleteReward(Reward reward){
-        return rewardMapper.deleteReward(reward);
+    public int deleteReward(long id){
+        return rewardMapper.deleteReward(id);
+    }
+
+    @Override
+    public int cancelDeleteReward(long id){
+        return rewardMapper.cancelDeleteReward(id);
     }
 
     @Override
     public boolean isEnough(int point, int id) {
-        if (point<userMapper.getPointsByID(id)){
+        if (point<=userMapper.getPointsByID(id)){
             return true;
         }else
         return false;
